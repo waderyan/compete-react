@@ -1,5 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 
 .idea/
-dist/
+dist/bundle.js
+dist/bundle.js.map
+dist/vendor/
 node_modules/

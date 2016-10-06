@@ -1,6 +1,6 @@
 import React from 'react';
 
-class College extends React.Component {
+class Product extends React.Component {
 
     constructor() {
         super();
@@ -33,4 +33,4 @@ class College extends React.Component {
     }
 }
 
-export default College;
+export default Product;

@@ -1,11 +1,12 @@
 import React from 'react';
 import $ from 'jquery';
 import Product from './product';
-import lodash from 'lodash';
+import _ from 'lodash';
 
 
 
-class Product {
+
+class ProductData {
 
     constructor(name, logo, animation, wins, factors, styles) {
         this.name = name;
@@ -24,20 +25,12 @@ class App extends React.Component {
         super();
         this.state = {
             products: [
-                new Product('vscode', 'media/byu.png', 'media/wrestling_byu_wins.gif', 0, {
-                        bicep: 8,
-                        wrist: 5,
-                        savvy: 6
-                    }, {
+                new ProductData('VS Family', 'media/vs_icons.png', 'media/wrestling_vs_wins.gif', 0, [8, 5, 6], {
                         marginTop: '15%'
                     }),
-                new Product('webstorm', 'media/utah.png', 'media/wrestling_utah_wins.gif', 0, {
-                        bicep: 8,
-                        wrist: 5,
-                        savvy: 6
-                    })
+                new ProductData('Webstorm', 'media/ws_icon.png', 'media/wrestling_ws_wins.gif', 0, [8, 5, 6])
             ]
-        }
+        };
         this.styles = {
             logos: {
                 marginTop: "2%",
@@ -60,7 +53,7 @@ class App extends React.Component {
     /**
      * Updates the win record for the winning product. 
      * 
-     * @param {string} winningproduct -pproductl that won. 
+     * @param {string} winner - product that won.
      */
     updateWinRecord(winner) {
         winner.wins++;
@@ -72,33 +65,9 @@ class App extends React.Component {
         });
     }
 
-    /**
-     * Starts the wrestling animation. 
-     * 
-     * @param {string} winningproduct - product that won. 
-     */
-    startWrestling(winningProduct) {
-        let winner;
-
-        lodash.forEach(this.state.products, (product) => {
-            if (winningproduct === product.name) {
-                winner = product;
-            }
-        });
-
-        this.setState({
-            products: this.state.products,
-            wrestling: true,
-            winner: winner
-        });
-
-        setTimeout(() => {
-            this.updateWinRecord(winner);
-        }, 3000);
-    }
 
     handleClick() {
-        const URL = 'http://localhost:3001/wrestle';
+        const URL = 'http://localhost:3000/wrestle';
 
         $.ajax({
             url: URL,
@@ -108,8 +77,20 @@ class App extends React.Component {
                 xProduct: this.state.products[0],
                 yProduct: this.state.products[1]
             },
-            success: (data) => {
-                this.startWrestling(data.winner);
+            error: (data) => {
+                alert('Server error!')
+            },
+            success: (winner) => {
+
+                this.setState({
+                    products: this.state.products,
+                    wrestling: true,
+                    winner: winner
+                });
+
+                setTimeout(() => {
+                    this.updateWinRecord(winner);
+                }, 3000);
             }
         });
     }
@@ -122,7 +103,7 @@ class App extends React.Component {
                 var wrestling = <img width="100%" src={this.state.winner.animation + '?' + new Date().getTime()} />;
             }
             if (!s.wrestling) {
-                var winner = <p style={this.styles.winner}>{capitalize(this.state.winner.name)} Wins!</p>;
+                var winner = <p style={this.styles.winner}>{this.state.winner.name} Wins!</p>;
             } 
         }
 
@@ -156,10 +137,6 @@ class App extends React.Component {
     }
 }
 
-
-function capitalize(s) {
-    return s.charAt(0).toUpperCase() + s.slice(1);
-}
 
 export default App;
 
